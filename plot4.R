@@ -1,0 +1,17 @@
+library("data.table")
+dtime <- difftime(as.POSIXct("2007-02-03"), as.POSIXct("2007-02-01"),units="mins")
+rowsToRead <- as.numeric(dtime)
+DT <- fread("household_power_consumption.txt", skip="1/2/2007", nrows = rowsToRead, na.strings = c("?", ""))
+DT$datetime <- as.POSIXct(paste(DT$V1,DT$V2), format="%d/%m/%Y %H:%M:%S")
+png(file = "plot4.png", width = 480, height = 480)
+par(mfrow = c(2,2))
+with(DT,{
+         plot(DT$datetime,DT$V3, type = "l", col = "black",xlab = "",ylab = "Global Active Power(kilowatts)")})
+         plot(DT$datetime,DT$V5,type = "l", col = "black",xlab = "datetime",ylab = "Voltage")
+         plot(DT$datetime,DT$V7, type = "l", col = "black", xlab = "",  ylab = "Energy sub metering" )
+         lines(DT$datetime, DT$V8, col = "red")
+         lines(DT$datetime, DT$V9, col = "blue")
+         legend("topright",lty = 1, col = c("black","red","blue"), legend = c("Sub_metering_1","Sub_metering_2","Sub_metering_3"), bty = "n")         
+         plot(DT$datetime,DT$V4 ,type = "l", col = "black",xlab = "datetime",ylab = "Global_reactive_power")
+
+dev.off()
